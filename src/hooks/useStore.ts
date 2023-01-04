@@ -1,6 +1,7 @@
 import create from "zustand";
 import React from "react";
 import { nanoid } from "nanoid";
+import { dirtTexture } from "../assets/blocks/textures";
 
 export type TCube = {
   key: string;
@@ -9,7 +10,7 @@ export type TCube = {
 };
 export const useStore = create((set: any) => ({
   texture: "dirt",
-  cubes: [{ key: nanoid, position: [1, 1, 1], texture: "dirt" }],
+  cubes: [{ key: nanoid, position: [1, 1, 1], texture: dirtTexture }],
   addCube: (x: number, y: number, z: number) =>
     set((prev: any) => ({
       cubes: [

@@ -1,5 +1,4 @@
-import { useSphere } from "@react-three/cannon";
-import { Sphere } from "@react-three/drei";
+import { useBox, useSphere } from "@react-three/cannon";
 import { useFrame, useThree } from "@react-three/fiber";
 import React, { useEffect, useRef } from "react";
 import { Vector3 } from "three";
@@ -13,10 +12,10 @@ export const Player = () => {
   const { moveBackward, moveForward, moveLeft, moveRight, jump } =
     useKeyboard();
 
-  const [ref, api]: any = useSphere(() => {
+  const [ref, api]: [ref: any, api: any] = useBox(() => {
     return {
       mass: 1,
-      position: [0, 1, 0],
+      position: [0, 10, 0],
       type: "Dynamic",
     };
   });
@@ -63,12 +62,18 @@ export const Player = () => {
 
     api.velocity.set(direction.x, vel.current[1], direction.z);
 
-    if (jump && Math.abs(vel.current[1]) < 0.05) {
-      api.velocity?.set(vel.current[0], 10, vel.current[2]);
+    // if (jump && Math.abs(vel.current[1]) < 0.05) {
+    if (jump) {
+      api.velocity?.set(vel.current[0], 1, vel.current[2]);
     }
 
     // move up player by adding velocity
     // api.velocity.set(0, 1, 0);
   });
-  return <mesh ref={ref}></mesh>;
+  return (
+    <mesh ref={ref}>
+      <meshStandardMaterial attach="material" color="red" />
+      {/* <boxGeometry attach="geometry" args={[0, 0, 0]} /> */}
+    </mesh>
+  );
 };
