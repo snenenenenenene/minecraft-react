@@ -75,3 +75,5 @@ export const Cube = ({
     </mesh>
   );
 };
+
+export default Cube;

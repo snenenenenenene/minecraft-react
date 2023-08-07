@@ -1,4 +1,4 @@
-import { useSphere } from "@react-three/cannon";
+import { useBox } from "@react-three/cannon";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import { Vector3 } from "three";
@@ -12,10 +12,11 @@ export const Player = () => {
     useKeyboard();
 
   const { camera } = useThree();
-  const [ref, api]: any = useSphere(() => ({
-    mass: 1,
+  const [ref, api]: any = useBox(() => ({
+    mass: 9.81,
     type: "Dynamic",
-    position: [0, 1, 0],
+    position: [0, 10, 0],
+    args: [0.5, 3, 0.5],
   }));
 
   const vel = useRef([0, 0, 0]);
@@ -27,6 +28,17 @@ export const Player = () => {
   useEffect(() => {
     api.position.subscribe((p: any) => (pos.current = p));
   }, [api.position]);
+
+  // always have the box be upright without stuttering
+  useEffect(() => {
+    api.rotation.subscribe((r: any) => {
+      api.rotation.set(0, r[1], 0);
+    });
+
+    return () => {
+      api.rotation.set(0, 0, 0);
+    };
+  }, [api.rotation]);
 
   useFrame(() => {
     camera.position.copy(

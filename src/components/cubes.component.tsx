@@ -13,6 +13,8 @@ export const Cubes = () => {
       position: [number, number, number];
       texture: string;
     }) => {
+      console.log(position);
+      console.log(key);
       return <Cube key={key} position={position} texture={texture} />;
     }
   );
