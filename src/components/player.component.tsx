@@ -3,6 +3,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import { Vector3 } from "three";
 import { useKeyboard } from "../hooks/useKeyboard";
+import { useStore } from "../hooks/useStore";
 
 const JUMP_FORCE = 4;
 const SPEED = 4;
@@ -11,12 +12,17 @@ export const Player = () => {
   const { moveBackward, moveForward, moveRight, moveLeft, jump } =
     useKeyboard();
 
+  const setPlayer = useStore((state) => state.setPlayer);
+  const player = useStore((state) => state.player);
+
   const { camera } = useThree();
   const [ref, api]: any = useBox(() => ({
     mass: 9.81,
     type: "Dynamic",
-    position: [0, 10, 0],
-    args: [0.5, 3, 0.5],
+    position: player.position,
+    args: [0.5, 2, 0.5],
+    rotation: [0, 0, 0],
+    angularFactor: [0, 1, 0],
   }));
 
   const vel = useRef([0, 0, 0]);
@@ -24,9 +30,12 @@ export const Player = () => {
     api.velocity.subscribe((v: any) => (vel.current = v));
   }, [api.velocity]);
 
-  const pos = useRef([0, 0, 0]);
+  const pos = useRef([0, 30, 0]);
   useEffect(() => {
-    api.position.subscribe((p: any) => (pos.current = p));
+    api.position.subscribe((p: any) => {
+      player.position = p;
+      return (pos.current = p);
+    });
   }, [api.position]);
 
   // always have the box be upright without stuttering
@@ -41,9 +50,18 @@ export const Player = () => {
   }, [api.rotation]);
 
   useFrame(() => {
+    // always position the camera behind the player and have it so the player is always in the center of the screen
     camera.position.copy(
-      new Vector3(pos.current[0], pos.current[1], pos.current[2])
+      new Vector3(pos.current[0] + 4, pos.current[1] + 4, pos.current[2])
     );
+
+    const cameraRotation = new Vector3(
+      camera.rotation.x,
+      camera.rotation.y,
+      camera.rotation.z
+    );
+
+    api.rotation.set(0, cameraRotation.y, 0);
 
     const direction = new Vector3();
 
@@ -67,10 +85,15 @@ export const Player = () => {
 
     api.velocity.set(direction.x, vel.current[1], direction.z);
 
-    if (jump && Math.abs(vel.current[1]) < 0.05) {
+    if (jump && Math.abs(vel.current[1]) < 0.2) {
       api.velocity.set(vel.current[0], JUMP_FORCE, vel.current[2]);
     }
   });
 
-  return <mesh ref={ref}></mesh>;
+  return (
+    <mesh ref={ref}>
+      <boxBufferGeometry attach={"geometry"} args={[0.5, 2, 0.5]} />
+      <meshStandardMaterial attach={"material"} color="hotpink" />
+    </mesh>
+  );
 };

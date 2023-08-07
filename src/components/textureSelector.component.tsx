@@ -39,21 +39,21 @@ export const TextureSelector = () => {
   }, [setTexture, dirt, grass, glass, wood, log]);
 
   return (
-    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-500 p-1  h-[4rem] gap-x-4 flex">
-      {Object.entries(images).map(([k, src]) => {
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-500 p-1  h-[4rem] w-[20vw] gap-x-4 flex">
+      {Object.entries(images).map(([i, src]) => {
         return (
           <button
-            className="border-0 p-0"
+            className="border-0 p-0 flex w-full h-full"
             onClick={() => {
               setTexture(k);
             }}
           >
             <img
-              key={k}
+              key={i}
               src={src}
-              alt={k}
+              alt={i}
               className={`border-4 flex w-full h-full object-fill ${
-                k === activeTexture ? " border-gray-500" : "border-gray-700"
+                i === activeTexture ? " border-slate-500" : "border-slate-700"
               }`}
             />
           </button>
