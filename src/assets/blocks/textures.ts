@@ -1,11 +1,17 @@
-import { TextureLoader } from "three";
+import { NearestFilter, TextureLoader } from "three";
 
-import { dirtImg, grassImg, glassImg, woodImg, logImg } from "./images";
+import { dirtImg, glassImg, grassImg, logImg, woodImg } from "./images";
 
 const dirtTexture = new TextureLoader().load(dirtImg);
-const groundTexture = new TextureLoader().load(grassImg);
+const grassTexture = new TextureLoader().load(grassImg);
 const glassTexture = new TextureLoader().load(glassImg);
 const woodTexture = new TextureLoader().load(woodImg);
 const logTexture = new TextureLoader().load(logImg);
 
-export { dirtTexture, groundTexture, glassTexture, woodTexture, logTexture };
+dirtTexture.magFilter = NearestFilter;
+grassTexture.magFilter = NearestFilter;
+glassTexture.magFilter = NearestFilter;
+woodTexture.magFilter = NearestFilter;
+logTexture.magFilter = NearestFilter;
+
+export { dirtTexture, glassTexture, grassTexture, logTexture, woodTexture };

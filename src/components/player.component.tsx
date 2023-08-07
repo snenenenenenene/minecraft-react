@@ -1,43 +1,36 @@
-import { useBox, useSphere } from "@react-three/cannon";
+import { useSphere } from "@react-three/cannon";
 import { useFrame, useThree } from "@react-three/fiber";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Vector3 } from "three";
 import { useKeyboard } from "../hooks/useKeyboard";
 
-const JUMP_FORCE = 5;
-const PLAYER_SPEED = 4;
+const JUMP_FORCE = 4;
+const SPEED = 4;
 
 export const Player = () => {
-  const { camera } = useThree();
-  const { moveBackward, moveForward, moveLeft, moveRight, jump } =
+  const { moveBackward, moveForward, moveRight, moveLeft, jump } =
     useKeyboard();
 
-  const [ref, api]: [ref: any, api: any] = useBox(() => {
-    return {
-      mass: 1,
-      position: [0, 10, 0],
-      type: "Dynamic",
-    };
-  });
+  const { camera } = useThree();
+  const [ref, api]: any = useSphere(() => ({
+    mass: 1,
+    type: "Dynamic",
+    position: [0, 1, 0],
+  }));
 
-  const vel: any = useRef([0, 0, 0]);
+  const vel = useRef([0, 0, 0]);
   useEffect(() => {
-    api.velocity.subscribe((v: any) => {
-      vel.current = v;
-    });
+    api.velocity.subscribe((v: any) => (vel.current = v));
   }, [api.velocity]);
 
+  const pos = useRef([0, 0, 0]);
   useEffect(() => {
-    api.position.subscribe((p: any) => {
-      position.current = p;
-    });
+    api.position.subscribe((p: any) => (pos.current = p));
   }, [api.position]);
 
-  const position = useRef([0, 0, 0]);
   useFrame(() => {
-    // make camera follow player
     camera.position.copy(
-      new Vector3(position.current[0], position.current[1], position.current[2])
+      new Vector3(pos.current[0], pos.current[1], pos.current[2])
     );
 
     const direction = new Vector3();
@@ -57,23 +50,15 @@ export const Player = () => {
     direction
       .subVectors(frontVector, sideVector)
       .normalize()
-      .multiplyScalar(PLAYER_SPEED)
+      .multiplyScalar(SPEED)
       .applyEuler(camera.rotation);
 
     api.velocity.set(direction.x, vel.current[1], direction.z);
 
-    // if (jump && Math.abs(vel.current[1]) < 0.05) {
-    if (jump) {
-      api.velocity?.set(vel.current[0], 1, vel.current[2]);
+    if (jump && Math.abs(vel.current[1]) < 0.05) {
+      api.velocity.set(vel.current[0], JUMP_FORCE, vel.current[2]);
     }
-
-    // move up player by adding velocity
-    // api.velocity.set(0, 1, 0);
   });
-  return (
-    <mesh ref={ref}>
-      <meshStandardMaterial attach="material" color="red" />
-      {/* <boxGeometry attach="geometry" args={[0, 0, 0]} /> */}
-    </mesh>
-  );
+
+  return <mesh ref={ref}></mesh>;
 };

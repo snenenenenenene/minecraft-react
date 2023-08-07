@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-function actionByKey(key: any): any {
+function actionByKey(key: any) {
   const keyActionMap: any = {
     KeyW: "moveForward",
     KeyS: "moveBackward",
@@ -13,7 +13,6 @@ function actionByKey(key: any): any {
     Digit4: "wood",
     Digit5: "log",
   };
-
   return keyActionMap[key];
 }
 
@@ -24,26 +23,33 @@ export const useKeyboard = () => {
     moveLeft: false,
     moveRight: false,
     jump: false,
-    texture1: false,
-    texture2: false,
-    texture3: false,
-    texture4: false,
+    dirt: false,
+    grass: false,
+    glass: false,
+    wood: false,
+    log: false,
   });
 
-  const handleKeyDown = useCallback((e: any) => {
+  const handleKeyDown = useCallback((e) => {
     const action = actionByKey(e.code);
     if (action) {
       setActions((prev) => {
-        return { ...prev, [action]: true };
+        return {
+          ...prev,
+          [action]: true,
+        };
       });
     }
   }, []);
 
-  const handleKeyUp = useCallback((e: any) => {
+  const handleKeyUp = useCallback((e) => {
     const action = actionByKey(e.code);
     if (action) {
       setActions((prev) => {
-        return { ...prev, [action]: false };
+        return {
+          ...prev,
+          [action]: false,
+        };
       });
     }
   }, []);

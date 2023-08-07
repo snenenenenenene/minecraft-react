@@ -1,16 +1,20 @@
-import create from "zustand";
-import React from "react";
 import { nanoid } from "nanoid";
-import { dirtTexture } from "../assets/blocks/textures";
+import create from "zustand";
 
 export type TCube = {
   key: string;
   position: [number, number, number];
   texture: string;
 };
+
+const getLocalStorage = (key: string) =>
+  JSON.parse(window.localStorage?.getItem(key) || "[]");
+const setLocalStorage = (key: string, value: any) =>
+  window.localStorage.setItem(key, JSON.stringify(value));
+
 export const useStore = create((set: any) => ({
-  texture: "dirt",
-  cubes: [{ key: nanoid, position: [1, 1, 1], texture: dirtTexture }],
+  texture: "wood",
+  cubes: getLocalStorage("cubes") || [],
   addCube: (x: number, y: number, z: number) =>
     set((prev: any) => ({
       cubes: [
@@ -18,12 +22,27 @@ export const useStore = create((set: any) => ({
         { key: nanoid, position: [x, y, z], texture: prev.texture },
       ],
     })),
-  setTexture: (texture: any) => set({ texture }),
-  removeCube: (id: any): void =>
-    set((state: any) => ({
-      cubes: state.cubes.filter((cube: any) => cube.id !== id),
-    })),
-  saveWorld: () => {},
-  resetWorld: () => {},
-  loadWorld: () => {},
+  removeCube: ({ x, y, z }: { x: number; y: number; z: number }) => {
+    set((prev: any) => ({
+      cubes: prev.cubes.filter((cube: any) => {
+        const [X, Y, Z] = cube.position;
+        return X !== x || Y !== y || Z !== z;
+      }),
+    }));
+  },
+  setTexture: (texture: string) => {
+    set(() => ({
+      texture,
+    }));
+  },
+  saveWorld: () => {
+    set((prev: any) => {
+      setLocalStorage("cubes", prev.cubes);
+    });
+  },
+  resetWorld: () => {
+    set(() => ({
+      cubes: [],
+    }));
+  },
 }));
