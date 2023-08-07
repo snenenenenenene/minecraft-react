@@ -38,7 +38,6 @@ export const Cube = ({
         const clickedFace = Math.floor(e.faceIndex! / 2);
         const { x, y, z } = ref.current.position;
         if (e.shiftKey) {
-          console.log("heklpp");
           removeCube({ x: x, y: y, z: z });
           return;
         } else if (clickedFace === 0) {
