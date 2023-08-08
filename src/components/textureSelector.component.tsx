@@ -45,7 +45,7 @@ export const TextureSelector = () => {
           <button
             className="border-0 p-0 flex w-full h-full"
             onClick={() => {
-              setTexture(k);
+              setTexture(i);
             }}
           >
             <img
