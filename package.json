@@ -15,7 +15,7 @@
     "alea": "^1.0.1",
     "fast-simplex-noise": "^4.0.0",
     "fastnoisejs": "^1.0.1",
-    "nanoid": "^3.3.4",
+    "nanoid": "^3.3.18",
     "noisejs": "^2.1.0",
     "perlin-noise-3d": "^0.5.4",
     "perlin-simplex": "^0.0.3",
